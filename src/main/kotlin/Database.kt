@@ -144,7 +144,7 @@ fun importFeedsFromCsv(conn: Connection, config: AppConfig, feedsPath: String? =
     }
     val csv = File(feedsPath ?: "feeds.csv")
     if (count > 0L || !csv.exists()) return
-    logger.info("Importing feeds from ${csv.path}...")
+    logger.info("Importing feeds from ${csv.absolutePath}...")
     csv.bufferedReader().useLines { lines ->
         val iterator = lines.iterator()
         if (iterator.hasNext()) iterator.next() // skip header
@@ -155,6 +155,7 @@ fun importFeedsFromCsv(conn: Connection, config: AppConfig, feedsPath: String? =
                 val parts = line.split(',')
                 if (parts.size >= 5) {
                     val url = parts[0].trim()
+                    logger.info("Importing feed $url...")
                     val outlet = parts.getOrNull(1)?.trim().takeUnless { it.isNullOrEmpty() }
                     val country = parts.getOrNull(2)?.trim()?.takeIf { it.isNotEmpty() }
                     val topic = parts.getOrNull(3)?.trim()?.takeIf { it.isNotEmpty() }
