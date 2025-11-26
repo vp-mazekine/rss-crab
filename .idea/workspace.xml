@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cea12c00-6546-43c2-a058-d6686a2b739c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Database.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Database.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/SQLiteIntegrationTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/SQLiteIntegrationTest.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +103,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.rss-crab [:MainKt.main()].executor": "Debug",
     "Gradle.rss-crab [build].executor": "Run",
     "Gradle.rss-crab [test].executor": "Run",
     "Gradle.rss-crab [wrapper].executor": "Run",
@@ -117,9 +119,14 @@
     "nodejs_package_manager_path": "npm",
     "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlite"
+    ]
   }
 }]]></component>
-  <component name="RunManager" selected="Gradle.rss-crab [wrapper]">
+  <component name="RunManager" selected="Kotlin.MainKt">
     <configuration name="rss-crab [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -186,10 +193,18 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="MainKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <module name="rss-crab.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.rss-crab [wrapper]" />
+        <item itemvalue="Kotlin.MainKt" />
         <item itemvalue="Gradle.rss-crab [build]" />
+        <item itemvalue="Gradle.rss-crab [wrapper]" />
         <item itemvalue="Gradle.rss-crab [test]" />
       </list>
     </recent_temporary>
@@ -209,11 +224,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1764165532730</updated>
-      <workItem from="1764165533968" duration="7399000" />
+      <workItem from="1764165533968" duration="8044000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/Database.kt</url>
+          <line>153</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

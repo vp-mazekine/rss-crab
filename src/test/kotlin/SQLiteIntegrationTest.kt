@@ -26,7 +26,7 @@ class SQLiteIntegrationTest {
                 maxParallelFetches = 1,
                 requestTimeoutMillis = 15_000,
                 jitterMaxSeconds = 0,
-                connectivityCheckUrl = "https://www.google.com/generate_204"
+                connectivityCheckUrl = "https://www.google.com/"
             ),
             errorHandling = ErrorHandlingConfig(),
             telegram = TelegramConfig(),

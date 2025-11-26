@@ -56,8 +56,8 @@ fun main(args: Array<String>) = runBlocking {
                     selectDueFeedIds(conn)
                 }
             }
-            logger.info("Found ${dueFeedIds.size} due feed(s)")
             if (dueFeedIds.isNotEmpty()) {
+                logger.info("Found ${dueFeedIds.size} due feed(s)")
                 logger.info("Scheduling feed parsing...")
             }
             for (id in dueFeedIds) {
