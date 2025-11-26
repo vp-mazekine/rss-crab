@@ -13,7 +13,17 @@ fun main(args: Array<String>) = runBlocking {
         return@runBlocking
     }
 
-    val config = loadConfig()
+    val configFlagIndex = args.indexOfFirst { it == "--config" || it == "-c" }
+    val configPath = when {
+        configFlagIndex == -1 -> null
+        configFlagIndex == args.lastIndex -> {
+            System.err.println("Missing path after ${args[configFlagIndex]}")
+            exitProcess(1)
+        }
+        else -> args[configFlagIndex + 1]
+    }
+
+    val config = loadConfig(configPath)
     try {
         withContext(Dispatchers.IO) {
             Database.getConnection(config).use { conn ->

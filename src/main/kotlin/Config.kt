@@ -36,8 +36,9 @@ data class AppConfig(
     val sourceVersion: String = appDisplayVersion()
 )
 
-fun loadConfig(): AppConfig {
-    val config = ConfigFactory.parseFile(File("application.conf")).withFallback(ConfigFactory.load())
+fun loadConfig(configPath: String? = null): AppConfig {
+    val configFile = configPath?.let(::File) ?: File("application.conf")
+    val config = ConfigFactory.parseFile(configFile).withFallback(ConfigFactory.load())
     val root = config.getConfig("rss-crab")
     val db = root.getConfig("db")
     val scheduler = root.getConfigOrNull("scheduler")
