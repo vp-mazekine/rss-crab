@@ -13,7 +13,7 @@ data class SchedulerConfig(
     val maxParallelFetches: Int = 5,
     val requestTimeoutMillis: Long = 10_000,
     val jitterMaxSeconds: Int = 300,
-    val connectivityCheckUrl: String = "https://www.google.com/generate_204"
+    val connectivityCheckUrl: String = "https://www.google.com/"
 )
 
 data class ErrorHandlingConfig(
