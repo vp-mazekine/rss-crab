@@ -26,14 +26,27 @@ fun main(args: Array<String>) = runBlocking {
         else -> args[configFlagIndex + 1]
     }
 
+    val feedsFlagIndex = args.indexOfFirst { it == "--feeds-file" || it == "-f" }
+    val feedsCsvPath = when {
+        feedsFlagIndex == -1 -> null
+        feedsFlagIndex == args.lastIndex -> {
+            logger.error("Missing path after ${args[feedsFlagIndex]}")
+            exitProcess(1)
+        }
+        else -> args[feedsFlagIndex + 1]
+    }
+
     val config = loadConfig(configPath)
     logger.info("Starting rss-crab ${config.sourceVersion}")
     logger.info("Using configuration from ${configPath ?: "classpath/application.conf"}")
+    if (feedsCsvPath != null) {
+        logger.info("Using feeds CSV from $feedsCsvPath")
+    }
     try {
         withContext(Dispatchers.IO) {
             Database.getConnection(config).use { conn ->
                 ensureTables(conn)
-                importFeedsFromCsv(conn, config)
+                importFeedsFromCsv(conn, config, feedsCsvPath)
             }
         }
         val semaphore = Semaphore(config.scheduler.maxParallelFetches)

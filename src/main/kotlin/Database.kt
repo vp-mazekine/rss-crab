@@ -131,14 +131,14 @@ data class FeedRow(
     val backoffFactor: Double
 )
 
-fun importFeedsFromCsv(conn: Connection, config: AppConfig) {
+fun importFeedsFromCsv(conn: Connection, config: AppConfig, feedsPath: String? = null) {
     val count = conn.createStatement().use { st ->
         st.executeQuery("SELECT COUNT(*) FROM feeds").use { rs ->
             rs.next();
             rs.getLong(1)
         }
     }
-    val csv = File("feeds.csv")
+    val csv = File(feedsPath ?: "feeds.csv")
     if (count > 0L || !csv.exists()) return
     csv.bufferedReader().useLines { lines ->
         val iterator = lines.iterator()
