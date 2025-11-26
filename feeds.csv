@@ -1,0 +1,2 @@
+url,outlet_name,country_iso,topic,polling_interval_seconds
+https://e.vnexpress.net/rss/news.rss,"VnExpress International",VN,National,3600
