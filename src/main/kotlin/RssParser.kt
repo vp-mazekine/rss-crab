@@ -24,7 +24,7 @@ fun parseRss(xml: String): List<ParsedArticle> {
         }
     } catch (_: Exception) {
         // fall through to regex parsing
-        logger.error("Error during parsing rss:\n${xml.drop(256)}...\nTrying alternative method...")
+        logger.error("Error during parsing rss:\n${xml.take(256)}...\nTrying alternative method...")
     }
 
     val itemPattern = Pattern.compile("<item[\\s\\S]*?</item>|<entry[\\s\\S]*?</entry>", Pattern.CASE_INSENSITIVE)
