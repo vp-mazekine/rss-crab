@@ -1,11 +1,15 @@
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("Scheduler")
 
 suspend fun checkConnectivity(config: AppConfig): Boolean = withContext(Dispatchers.IO) {
     try {
         val result = fetchFeedXml(config, config.scheduler.connectivityCheckUrl)
         result.httpStatus in 200..399
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        logger.warn("Connectivity check failed: ${e.message}")
         false
     }
 }
@@ -16,8 +20,12 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
             getFeedById(conn, feedId)
         }
     } ?: return
-    if (feed.ignored) return
+    if (feed.ignored) {
+        logger.info("Skipping ignored feed ${feed.url}")
+        return
+    }
 
+    logger.info("Fetching feed ${feed.url}")
     val fetchResult = fetchFeedXml(config, feed.url)
 
     withContext(Dispatchers.IO) {
@@ -41,9 +49,11 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
                         insertArticles(conn, feedId, articles)
                         val nextRun = nowInstant().plusSeconds(effectiveInterval + randomJitterSeconds(config.scheduler.jitterMaxSeconds))
                         updateFeedSuccess(conn, feedId, nextRun, effectiveInterval)
+                        logger.info("Stored ${articles.size} article(s) for ${feed.url}; next run at $nextRun")
                     } else {
                         val ignored = updateFeedError(conn, latestFeed, ErrorClassification.Permanent, config)
                         if (ignored) sendTelegramMessage(config, "Feed ignored after parse errors: ${latestFeed.url}")
+                        logger.warn("No articles parsed for ${feed.url}; classification permanent=${ignored}")
                     }
                 } else {
                     val classification = when {
@@ -56,8 +66,9 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
                     }
                     val ignored = updateFeedError(conn, latestFeed, classification, config)
                     if (classification == ErrorClassification.GlobalTimeout) {
-                        println("Global connectivity issue detected, scheduling normally")
+                        logger.warn("Global connectivity issue detected during fetch; scheduling normally")
                     }
+                    logger.warn("Fetch failed for ${feed.url} status=${fetchResult.httpStatus} classification=$classification ignored=$ignored")
                     if (ignored) {
                         sendTelegramMessage(
                             config,

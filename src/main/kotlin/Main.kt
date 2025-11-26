@@ -5,11 +5,14 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
+
+private val logger = LoggerFactory.getLogger("rss-crab")
 
 fun main(args: Array<String>) = runBlocking {
     if (args.any { it == "--version" || it == "-v" }) {
-        println(appDisplayVersion())
+        logger.info(appDisplayVersion())
         return@runBlocking
     }
 
@@ -17,13 +20,15 @@ fun main(args: Array<String>) = runBlocking {
     val configPath = when {
         configFlagIndex == -1 -> null
         configFlagIndex == args.lastIndex -> {
-            System.err.println("Missing path after ${args[configFlagIndex]}")
+            logger.error("Missing path after ${args[configFlagIndex]}")
             exitProcess(1)
         }
         else -> args[configFlagIndex + 1]
     }
 
     val config = loadConfig(configPath)
+    logger.info("Starting rss-crab ${config.sourceVersion}")
+    logger.info("Using configuration from ${configPath ?: "classpath/application.conf"}")
     try {
         withContext(Dispatchers.IO) {
             Database.getConnection(config).use { conn ->
@@ -38,13 +43,14 @@ fun main(args: Array<String>) = runBlocking {
                     selectDueFeedIds(conn)
                 }
             }
+            logger.info("Found ${dueFeedIds.size} due feed(s)")
             for (id in dueFeedIds) {
                 launch {
                     semaphore.withPermit {
                         try {
                             processFeed(id, config)
                         } catch (e: Exception) {
-                            e.printStackTrace()
+                            logger.error("Failed to process feed $id", e)
                         }
                     }
                 }
@@ -52,7 +58,7 @@ fun main(args: Array<String>) = runBlocking {
             delay(5000)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        logger.error("rss-crab crashed", e)
         sendTelegramMessage(config, "rss-crab crashed: ${e.message}")
         exitProcess(1)
     }

@@ -20,7 +20,7 @@ dependencies {
     implementation("com.typesafe:config:1.4.3")
     implementation("com.rometools:rome:2.1.0")
     implementation("org.postgresql:postgresql:42.7.3")
-    implementation("org.slf4j:slf4j-simple:2.0.13")
+    implementation("ch.qos.logback:logback-classic:1.5.12")
     implementation("org.xerial:sqlite-jdbc:3.46.0.1")
 
     testImplementation(kotlin("test"))

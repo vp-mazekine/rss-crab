@@ -5,8 +5,10 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 
 private var clientInstance: HttpClient? = null
+private val logger = LoggerFactory.getLogger("HttpClient")
 
 fun httpClient(config: AppConfig): HttpClient {
     val existing = clientInstance
@@ -39,8 +41,10 @@ suspend fun fetchFeedXml(config: AppConfig, url: String): FetchResult = withCont
             FetchResult(status, null, "HTTP ${response.status.value} ${response.status.description}", false)
         }
     } catch (e: HttpRequestTimeoutException) {
+        logger.warn("Request to $url timed out: ${e.message}")
         FetchResult(null, null, e.message, true)
     } catch (e: Exception) {
+        logger.error("Request to $url failed", e)
         FetchResult(null, null, e.message, false)
     }
 }
