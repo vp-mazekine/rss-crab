@@ -153,7 +153,7 @@ fun importFeedsFromCsv(conn: Connection, config: AppConfig, feedsPath: String? =
         ).use { ps ->
             iterator.forEachRemaining { line ->
                 val parts = line.split(',')
-                if (parts.size >= 5) {
+                if (parts.size >= 3) {
                     val url = parts[0].trim()
                     logger.info("Importing feed $url...")
                     val outlet = parts.getOrNull(1)?.trim().takeUnless { it.isNullOrEmpty() }
