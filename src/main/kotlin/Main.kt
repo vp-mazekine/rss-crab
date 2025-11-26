@@ -57,6 +57,9 @@ fun main(args: Array<String>) = runBlocking {
                 }
             }
             logger.info("Found ${dueFeedIds.size} due feed(s)")
+            if (dueFeedIds.isNotEmpty()) {
+                logger.info("Scheduling feed parsing...")
+            }
             for (id in dueFeedIds) {
                 launch {
                     semaphore.withPermit {

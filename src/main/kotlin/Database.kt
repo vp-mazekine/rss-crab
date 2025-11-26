@@ -1,9 +1,12 @@
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Timestamp
 import java.time.Instant
 import kotlin.math.min
+
+private val logger = LoggerFactory.getLogger("r.c./Database")
 
 object Database {
     fun getConnection(config: AppConfig): Connection {
@@ -23,6 +26,7 @@ private fun isSQLite(conn: Connection): Boolean = conn.metaData.url.lowercase().
 
 fun ensureTables(conn: Connection) {
     val sqlite = isSQLite(conn)
+    logger.info("Updating database structure...")
     conn.createStatement().use { stmt ->
         val feedsSql = if (sqlite) {
             """
@@ -140,6 +144,7 @@ fun importFeedsFromCsv(conn: Connection, config: AppConfig, feedsPath: String? =
     }
     val csv = File(feedsPath ?: "feeds.csv")
     if (count > 0L || !csv.exists()) return
+    logger.info("Importing feeds from ${csv.path}...")
     csv.bufferedReader().useLines { lines ->
         val iterator = lines.iterator()
         if (iterator.hasNext()) iterator.next() // skip header
@@ -218,6 +223,7 @@ fun logFetch(conn: Connection, feedId: Int, result: FetchResult, config: AppConf
 }
 
 fun insertArticles(conn: Connection, feedId: Int, articles: List<ParsedArticle>) {
+    logger.info("Inserting ${articles.size} new articles from feed $feedId...", articles)
     conn.prepareStatement(
         "INSERT INTO articles (feed_id, guid, link, title, published_at) VALUES (?,?,?,?,?) ON CONFLICT DO NOTHING"
     ).use { ps ->

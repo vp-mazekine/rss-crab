@@ -1,10 +1,13 @@
 import com.rometools.rome.feed.module.SyModule
 import com.rometools.rome.io.SyndFeedInput
 import com.rometools.rome.io.XmlReader
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.time.Instant
 import java.util.Locale
 import java.util.regex.Pattern
+
+private val logger = LoggerFactory.getLogger("r.c./RssParser")
 
 fun parseRss(xml: String): List<ParsedArticle> {
     try {
@@ -21,6 +24,7 @@ fun parseRss(xml: String): List<ParsedArticle> {
         }
     } catch (_: Exception) {
         // fall through to regex parsing
+        logger.error("Error during parsing rss:\n${xml.drop(256)}...\nTrying alternative method...")
     }
 
     val itemPattern = Pattern.compile("<item[\\s\\S]*?</item>|<entry[\\s\\S]*?</entry>", Pattern.CASE_INSENSITIVE)

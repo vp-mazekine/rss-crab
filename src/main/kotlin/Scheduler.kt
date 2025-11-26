@@ -2,7 +2,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 
-private val logger = LoggerFactory.getLogger("Scheduler")
+private val logger = LoggerFactory.getLogger("r.c./Scheduler")
 
 suspend fun checkConnectivity(config: AppConfig): Boolean = withContext(Dispatchers.IO) {
     try {
@@ -25,7 +25,7 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
         return
     }
 
-    logger.info("Fetching feed ${feed.url}")
+    logger.info("Fetching feed ${feed.url}...")
     val fetchResult = fetchFeedXml(config, feed.url)
 
     withContext(Dispatchers.IO) {
