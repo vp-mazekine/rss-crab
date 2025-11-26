@@ -43,7 +43,7 @@ rss-crab {
 ```
 
 - The database URL determines whether PostgreSQL or SQLite is used; SQLite URLs enable foreign keys automatically.
-- On first run, `feeds.csv` (if present) seeds the `feeds` table once it is empty. Each row should include `url,outlet_name,country_iso,topic,polling_interval_seconds`.
+- On first run, `feeds.csv` (if present) seeds the `feeds` table once it is empty. Each row should include `url,outlet_name,country_iso,topic,polling_interval_seconds`. You can point to a different seed file with the `--feeds-file`/`-f` CLI flag.
 - Set `telegram.enabled` to `true` with valid credentials to receive crash/ignore notifications.
 
 ## Usage
@@ -51,6 +51,7 @@ rss-crab {
 - Print version: `./gradlew run --args="--version"`
 - Run with default config: `./gradlew run`
 - Run with a custom config: `./gradlew run --args="--config /path/to/app.conf"`
+- Run with a custom feeds seed file: `./gradlew run --args="--feeds-file /path/to/feeds.csv"`
 
 ### Building a distributable JAR
 - Create a fat JAR: `./gradlew shadowJar`
