@@ -107,14 +107,14 @@ fun ensureTables(conn: Connection) {
             CREATE TABLE IF NOT EXISTS mentions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-                blockchain_name TEXT NOT NULL,
-                integrator_name TEXT NOT NULL,
-                sector TEXT NOT NULL,
-                country TEXT NOT NULL,
-                context TEXT NOT NULL,
+                blockchain_name TEXT NOT NULL DEFAULT '',
+                integrator_name TEXT NOT NULL DEFAULT '',
+                sector TEXT NOT NULL DEFAULT '',
+                country TEXT NOT NULL DEFAULT '',
+                context TEXT NOT NULL DEFAULT '',
                 has_metrics BOOLEAN NOT NULL DEFAULT FALSE,
                 has_product BOOLEAN NOT NULL DEFAULT FALSE,
-                product_name TEXT,
+                product_name TEXT NOT NULL DEFAULT '',
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
@@ -124,14 +124,14 @@ fun ensureTables(conn: Connection) {
             CREATE TABLE IF NOT EXISTS mentions (
                 id BIGSERIAL PRIMARY KEY,
                 article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
-                blockchain_name TEXT NOT NULL,
-                integrator_name TEXT NOT NULL,
-                sector TEXT NOT NULL,
-                country TEXT NOT NULL,
-                context TEXT NOT NULL,
+                blockchain_name TEXT NOT NULL DEFAULT '',
+                integrator_name TEXT NOT NULL DEFAULT '',
+                sector TEXT NOT NULL DEFAULT '',
+                country TEXT NOT NULL DEFAULT '',
+                context TEXT NOT NULL DEFAULT '',
                 has_metrics BOOLEAN NOT NULL DEFAULT FALSE,
                 has_product BOOLEAN NOT NULL DEFAULT FALSE,
-                product_name TEXT,
+                product_name TEXT NOT NULL DEFAULT '',
                 created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
                 updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
             );
@@ -162,10 +162,14 @@ fun ensureTables(conn: Connection) {
             """.trimIndent()
         }
 
-        stmt.execute(feedsSql)
-        stmt.execute(articlesSql)
-        stmt.execute(mentionsSql)
-        stmt.execute(logSql)
+        try {
+            stmt.execute(feedsSql)
+            stmt.execute(articlesSql)
+            stmt.execute(mentionsSql)
+            stmt.execute(logSql)
+        } catch (e: Exception) {
+            logger.error("Tables preparation failed", e)
+        }
     }
 }
 
