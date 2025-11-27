@@ -36,7 +36,7 @@ fun main(args: Array<String>) = runBlocking {
         else -> args[feedsFlagIndex + 1]
     }
 
-    val config = loadConfig(configPath)
+    var config = loadConfig(configPath)
     logger.info("Starting rss-crab ${config.sourceVersion}")
     logger.info("Using configuration from ${configPath ?: "classpath/application.conf"}")
     if (feedsCsvPath != null) {
@@ -49,8 +49,16 @@ fun main(args: Array<String>) = runBlocking {
                 importFeedsFromCsv(conn, config, feedsCsvPath)
             }
         }
-        val semaphore = Semaphore(config.scheduler.maxParallelFetches)
+        var semaphore = Semaphore(config.scheduler.maxParallelFetches)
         while (true) {
+            val latestConfig = loadConfig(configPath)
+            if (latestConfig.scheduler.maxParallelFetches != config.scheduler.maxParallelFetches) {
+                logger.info(
+                    "Updating maxParallelFetches from ${config.scheduler.maxParallelFetches} to ${latestConfig.scheduler.maxParallelFetches}"
+                )
+                semaphore = Semaphore(latestConfig.scheduler.maxParallelFetches)
+            }
+            config = latestConfig
             val dueFeedIds = withContext(Dispatchers.IO) {
                 Database.getConnection(config).use { conn ->
                     selectDueFeedIds(conn)
@@ -71,7 +79,7 @@ fun main(args: Array<String>) = runBlocking {
                     }
                 }
             }
-            delay(5000)
+            delay(config.scheduler.dbCheckIntervalMillis)
         }
     } catch (e: Exception) {
         logger.error("rss-crab crashed", e)
