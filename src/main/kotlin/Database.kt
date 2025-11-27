@@ -102,6 +102,42 @@ fun ensureTables(conn: Connection) {
             """.trimIndent()
         }
 
+        val mentionsSql = if (sqlite) {
+            """
+            CREATE TABLE IF NOT EXISTS mentions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+                blockchain_name TEXT NOT NULL,
+                integrator_name TEXT NOT NULL,
+                sector TEXT NOT NULL,
+                country TEXT NOT NULL,
+                context TEXT NOT NULL,
+                has_metrics BOOLEAN NOT NULL DEFAULT FALSE,
+                has_product BOOLEAN NOT NULL DEFAULT FALSE,
+                product_name TEXT,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+            """.trimIndent()
+        } else {
+            """
+            CREATE TABLE IF NOT EXISTS mentions (
+                id BIGSERIAL PRIMARY KEY,
+                article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+                blockchain_name TEXT NOT NULL,
+                integrator_name TEXT NOT NULL,
+                sector TEXT NOT NULL,
+                country TEXT NOT NULL,
+                context TEXT NOT NULL,
+                has_metrics BOOLEAN NOT NULL DEFAULT FALSE,
+                has_product BOOLEAN NOT NULL DEFAULT FALSE,
+                product_name TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            );
+            """.trimIndent()
+        }
+
         val logSql = if (sqlite) {
             """
             CREATE TABLE IF NOT EXISTS feed_fetch_log (
@@ -128,6 +164,7 @@ fun ensureTables(conn: Connection) {
 
         stmt.execute(feedsSql)
         stmt.execute(articlesSql)
+        stmt.execute(mentionsSql)
         stmt.execute(logSql)
     }
 }
