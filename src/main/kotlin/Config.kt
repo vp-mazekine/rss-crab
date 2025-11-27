@@ -13,7 +13,8 @@ data class SchedulerConfig(
     val maxParallelFetches: Int = 5,
     val requestTimeoutMillis: Long = 10_000,
     val jitterMaxSeconds: Int = 300,
-    val connectivityCheckUrl: String = "https://www.google.com/"
+    val connectivityCheckUrl: String = "https://www.google.com/",
+    val dbCheckIntervalMillis: Long = 5_000
 )
 
 data class ErrorHandlingConfig(
@@ -56,7 +57,8 @@ fun loadConfig(configPath: String? = null): AppConfig {
             maxParallelFetches = scheduler?.getInt("maxParallelFetches") ?: SchedulerConfig().maxParallelFetches,
             requestTimeoutMillis = scheduler?.getLong("requestTimeoutMillis") ?: SchedulerConfig().requestTimeoutMillis,
             jitterMaxSeconds = scheduler?.getInt("jitterMaxSeconds") ?: SchedulerConfig().jitterMaxSeconds,
-            connectivityCheckUrl = scheduler?.getString("connectivityCheckUrl") ?: SchedulerConfig().connectivityCheckUrl
+            connectivityCheckUrl = scheduler?.getString("connectivityCheckUrl") ?: SchedulerConfig().connectivityCheckUrl,
+            dbCheckIntervalMillis = scheduler?.getLong("dbCheckIntervalMillis") ?: SchedulerConfig().dbCheckIntervalMillis
         ),
         errorHandling = ErrorHandlingConfig(
             maxConsecutiveErrors = errorHandling?.getInt("maxConsecutiveErrors") ?: ErrorHandlingConfig().maxConsecutiveErrors,
