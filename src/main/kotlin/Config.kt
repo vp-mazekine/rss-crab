@@ -29,11 +29,16 @@ data class TelegramConfig(
     val chatId: String = ""
 )
 
+data class ArticleFilterConfig(
+    val maxAgeDays: Long = 30
+)
+
 data class AppConfig(
     val db: DbConfig,
     val scheduler: SchedulerConfig = SchedulerConfig(),
     val errorHandling: ErrorHandlingConfig = ErrorHandlingConfig(),
     val telegram: TelegramConfig = TelegramConfig(),
+    val articles: ArticleFilterConfig = ArticleFilterConfig(),
     val sourceVersion: String = appDisplayVersion()
 )
 
@@ -45,6 +50,7 @@ fun loadConfig(configPath: String? = null): AppConfig {
     val scheduler = root.getConfigOrNull("scheduler")
     val errorHandling = root.getConfigOrNull("errorHandling")
     val telegram = root.getConfigOrNull("telegram")
+    val articles = root.getConfigOrNull("articles")
 
     return AppConfig(
         db = DbConfig(
@@ -70,9 +76,13 @@ fun loadConfig(configPath: String? = null): AppConfig {
             botToken = telegram?.getString("botToken") ?: TelegramConfig().botToken,
             chatId = telegram?.getString("chatId") ?: TelegramConfig().chatId
         ),
+        articles = ArticleFilterConfig(
+            maxAgeDays = articles?.getLong("maxAgeDays") ?: ArticleFilterConfig().maxAgeDays
+        ),
         sourceVersion = root.getStringOrNull("sourceVersion") ?: appDisplayVersion()
     )
 }
 
 private fun Config.getConfigOrNull(path: String): Config? = if (hasPath(path)) getConfig(path) else null
 private fun Config.getStringOrNull(path: String): String? = if (hasPath(path)) getString(path) else null
+

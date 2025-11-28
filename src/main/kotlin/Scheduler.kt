@@ -45,11 +45,23 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
                 if (fetchResult.body != null && (fetchResult.httpStatus ?: 0) in 200..299) {
                     val articles = parseRss(fetchResult.body)
                     if (articles.isNotEmpty()) {
+                        val filteredArticles = filterArticlesByAge(articles, config.articles.maxAgeDays)
+                        val filteredOutCount = articles.size - filteredArticles.size
+                        if (filteredOutCount > 0) {
+                            logger.info("Filtered out $filteredOutCount article(s) older than ${config.articles.maxAgeDays} days for ${feed.url}")
+                        }
+
                         val effectiveInterval = extractIntervalSeconds(fetchResult.body, baseInterval)
-                        insertArticles(conn, feedId, articles)
                         val nextRun = nowInstant().plusSeconds(effectiveInterval + randomJitterSeconds(config.scheduler.jitterMaxSeconds))
+
+                        if (filteredArticles.isNotEmpty()) {
+                            insertArticles(conn, feedId, filteredArticles)
+                            logger.info("Stored ${filteredArticles.size} article(s) for ${feed.url}; next run at $nextRun")
+                        } else {
+                            logger.info("No articles newer than ${config.articles.maxAgeDays} days for ${feed.url}; next run at $nextRun")
+                        }
+
                         updateFeedSuccess(conn, feedId, nextRun, effectiveInterval)
-                        logger.info("Stored ${articles.size} article(s) for ${feed.url}; next run at $nextRun")
                     } else {
                         val ignored = updateFeedError(conn, latestFeed, ErrorClassification.Permanent, config)
                         if (ignored) sendTelegramMessage(config, "Feed ignored after parse errors: ${latestFeed.url}")
@@ -82,5 +94,15 @@ suspend fun processFeed(feedId: Int, config: AppConfig) {
                 throw e
             }
         }
+    }
+}
+
+private fun filterArticlesByAge(articles: List<ParsedArticle>, maxAgeDays: Long): List<ParsedArticle> {
+    if (maxAgeDays <= 0) return articles
+
+    val cutoff = nowInstant().minusSeconds(maxAgeDays * 86_400L)
+    return articles.filter { article ->
+        val publishedAt = article.publishedAt
+        publishedAt == null || !publishedAt.isBefore(cutoff)
     }
 }

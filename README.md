@@ -38,6 +38,10 @@ rss-crab {
     chatId = ""
   }
 
+  articles {
+    maxAgeDays = 30
+  }
+
   sourceVersion = "rss-crab v0.1.0"
 }
 ```
@@ -45,6 +49,7 @@ rss-crab {
 - The database URL determines whether PostgreSQL or SQLite is used; SQLite URLs enable foreign keys automatically.
 - On first run, `feeds.csv` (if present) seeds the `feeds` table once it is empty. Each row should include `url,outlet_name,country_iso,topic,polling_interval_seconds`. You can point to a different seed file with the `--feeds-file`/`-f` CLI flag.
 - Set `telegram.enabled` to `true` with valid credentials to receive crash/ignore notifications.
+- Entries older than `articles.maxAgeDays` are ignored during insertion, allowing you to tune how far back to import historical content.
 
 ## Usage
 ### Running from source
