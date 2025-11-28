@@ -73,11 +73,11 @@ fun ensureTables(conn: Connection) {
                 link TEXT NOT NULL,
                 title TEXT,
                 contents TEXT,
-                is_about_blockchain BOOLEAN,
-                is_institutional_blockchain BOOLEAN,
+                is_relevant BOOLEAN,
                 published_at DATETIME,
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 ai_processed BOOLEAN NOT NULL DEFAULT FALSE,
+                processed_at DATETIME,
                 UNIQUE(feed_id, guid),
                 UNIQUE(feed_id, link)
             );
@@ -91,11 +91,11 @@ fun ensureTables(conn: Connection) {
                 link TEXT NOT NULL,
                 title TEXT,
                 contents TEXT,
-                is_about_blockchain BOOLEAN,
-                is_institutional_blockchain BOOLEAN,
+                is_relevant BOOLEAN,
                 published_at TIMESTAMPTZ,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
                 ai_processed BOOLEAN NOT NULL DEFAULT FALSE,
+                processed_at TIMESTAMPTZ,
                 UNIQUE(feed_id, guid),
                 UNIQUE(feed_id, link)
             );
