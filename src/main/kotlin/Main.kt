@@ -42,6 +42,8 @@ fun main(args: Array<String>) = runBlocking {
     if (feedsCsvPath != null) {
         logger.info("Using feeds CSV from $feedsCsvPath")
     }
+    val appStartTime = nowInstant()
+    val apiServer = startHealthApi(config, appStartTime)
     try {
         withContext(Dispatchers.IO) {
             Database.getConnection(config).use { conn ->
@@ -84,6 +86,7 @@ fun main(args: Array<String>) = runBlocking {
     } catch (e: Exception) {
         logger.error("rss-crab crashed", e)
         sendTelegramMessage(config, "rss-crab crashed: ${e.message}")
+        apiServer?.stop(1_000, 5_000)
         exitProcess(1)
     }
 }

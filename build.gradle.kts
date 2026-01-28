@@ -2,11 +2,12 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm") version "2.0.21"
+    kotlin("plugin.serialization") version "2.0.21"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-version = "0.1.0"
+version = "0.1.4"
 
 repositories {
     mavenCentral()
@@ -17,6 +18,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("io.ktor:ktor-client-core:2.3.12")
     implementation("io.ktor:ktor-client-cio:2.3.12")
+    implementation("io.ktor:ktor-server-core:2.3.12")
+    implementation("io.ktor:ktor-server-cio:2.3.12")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.12")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
     implementation("com.typesafe:config:1.4.3")
     implementation("com.rometools:rome:2.1.0")
     implementation("org.postgresql:postgresql:42.7.3")

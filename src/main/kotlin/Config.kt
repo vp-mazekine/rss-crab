@@ -33,12 +33,18 @@ data class ArticleFilterConfig(
     val maxAgeDays: Long = 30
 )
 
+data class ApiConfig(
+    val enabled: Boolean = true,
+    val port: Int = 8080
+)
+
 data class AppConfig(
     val db: DbConfig,
     val scheduler: SchedulerConfig = SchedulerConfig(),
     val errorHandling: ErrorHandlingConfig = ErrorHandlingConfig(),
     val telegram: TelegramConfig = TelegramConfig(),
     val articles: ArticleFilterConfig = ArticleFilterConfig(),
+    val api: ApiConfig = ApiConfig(),
     val sourceVersion: String = appDisplayVersion()
 )
 
@@ -51,6 +57,7 @@ fun loadConfig(configPath: String? = null): AppConfig {
     val errorHandling = root.getConfigOrNull("errorHandling")
     val telegram = root.getConfigOrNull("telegram")
     val articles = root.getConfigOrNull("articles")
+    val api = root.getConfigOrNull("api")
 
     return AppConfig(
         db = DbConfig(
@@ -79,10 +86,13 @@ fun loadConfig(configPath: String? = null): AppConfig {
         articles = ArticleFilterConfig(
             maxAgeDays = articles?.getLong("maxAgeDays") ?: ArticleFilterConfig().maxAgeDays
         ),
+        api = ApiConfig(
+            enabled = api?.getBoolean("enabled") ?: ApiConfig().enabled,
+            port = api?.getInt("port") ?: ApiConfig().port
+        ),
         sourceVersion = root.getStringOrNull("sourceVersion") ?: appDisplayVersion()
     )
 }
 
 private fun Config.getConfigOrNull(path: String): Config? = if (hasPath(path)) getConfig(path) else null
 private fun Config.getStringOrNull(path: String): String? = if (hasPath(path)) getString(path) else null
-

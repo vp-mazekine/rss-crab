@@ -1,4 +1,4 @@
-const val APP_VERSION = "0.1.0"
+const val APP_VERSION = "0.1.4"
 const val APP_NAME = "rss-crab"
 
 fun appDisplayVersion(): String {
