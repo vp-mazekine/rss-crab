@@ -4,6 +4,6 @@ import kotlin.test.assertEquals
 class VersionTest {
     @Test
     fun `displays default version string`() {
-        assertEquals("rss-crab v0.1.0", appDisplayVersion())
+        assertEquals("$APP_NAME v$APP_VERSION", appDisplayVersion())
     }
 }
