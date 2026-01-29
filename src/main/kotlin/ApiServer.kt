@@ -20,24 +20,33 @@ data class HealthResponse(
 fun startHealthApi(config: AppConfig, startedAt: Instant): ApplicationEngine? {
     if (!config.api.enabled) return null
 
-    val server = embeddedServer(CIO, port = config.api.port) {
-        install(ContentNegotiation) {
-            json()
-        }
-        routing {
-            get("/health") {
-                val uptimeSeconds = Duration.between(startedAt, nowInstant()).seconds
-                call.respond(
-                    HealthResponse(
-                        status = "ok",
-                        timestamp = nowInstant().toString(),
-                        uptimeSeconds = uptimeSeconds,
-                        version = config.sourceVersion
+    val environment = applicationEngineEnvironment {
+        module {
+            install(ContentNegotiation) {
+                json()
+            }
+            routing {
+                get("/health") {
+                    val uptimeSeconds = Duration.between(startedAt, nowInstant()).seconds
+                    call.respond(
+                        HealthResponse(
+                            status = "ok",
+                            timestamp = nowInstant().toString(),
+                            uptimeSeconds = uptimeSeconds,
+                            version = config.sourceVersion
+                        )
                     )
-                )
+                }
+            }
+        }
+        config.api.hosts.ifEmpty { listOf("0.0.0.0") }.forEach { host ->
+            connector {
+                this.host = host
+                port = config.api.port
             }
         }
     }
+    val server = embeddedServer(CIO, environment)
     server.start(wait = false)
     return server
 }

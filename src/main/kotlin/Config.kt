@@ -35,7 +35,8 @@ data class ArticleFilterConfig(
 
 data class ApiConfig(
     val enabled: Boolean = true,
-    val port: Int = 8080
+    val port: Int = 8080,
+    val hosts: List<String> = listOf("0.0.0.0")
 )
 
 data class AppConfig(
@@ -88,7 +89,10 @@ fun loadConfig(configPath: String? = null): AppConfig {
         ),
         api = ApiConfig(
             enabled = api?.getBoolean("enabled") ?: ApiConfig().enabled,
-            port = api?.getInt("port") ?: ApiConfig().port
+            port = api?.getInt("port") ?: ApiConfig().port,
+            hosts = api?.getStringListOrNull("hosts")
+                ?: api?.getStringOrNull("host")?.let { listOf(it) }
+                ?: ApiConfig().hosts
         ),
         sourceVersion = root.getStringOrNull("sourceVersion") ?: appDisplayVersion()
     )
@@ -96,3 +100,4 @@ fun loadConfig(configPath: String? = null): AppConfig {
 
 private fun Config.getConfigOrNull(path: String): Config? = if (hasPath(path)) getConfig(path) else null
 private fun Config.getStringOrNull(path: String): String? = if (hasPath(path)) getString(path) else null
+private fun Config.getStringListOrNull(path: String): List<String>? = if (hasPath(path)) getStringList(path) else null
