@@ -62,11 +62,15 @@ fun loadConfig(configPath: String? = null): AppConfig {
     val articles = root.getConfigOrNull("articles")
     val api = root.getConfigOrNull("api")
 
+    val envDbUrl = System.getenv("DB_URL")
+    val envDbUser = System.getenv("DB_USER")
+    val envDbPassword = System.getenv("DB_PASSWORD")
+
     return AppConfig(
         db = DbConfig(
-            url = db.getString("url"),
-            user = db.getStringOrNull("user") ?: "",
-            password = db.getStringOrNull("password") ?: ""
+            url = envDbUrl?.takeIf { it.isNotBlank() } ?: db.getString("url"),
+            user = envDbUser?.takeIf { it.isNotBlank() } ?: db.getStringOrNull("user") ?: "",
+            password = envDbPassword?.takeIf { it.isNotBlank() } ?: db.getStringOrNull("password") ?: ""
         ),
         scheduler = SchedulerConfig(
             defaultIntervalSeconds = scheduler?.getLong("defaultIntervalSeconds") ?: SchedulerConfig().defaultIntervalSeconds,
