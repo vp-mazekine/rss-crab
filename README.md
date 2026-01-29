@@ -42,7 +42,13 @@ rss-crab {
     maxAgeDays = 30
   }
 
-  sourceVersion = "rss-crab v0.1.0"
+  api {
+    enabled = true
+    port = 8080
+    hosts = ["0.0.0.0"]
+  }
+
+  sourceVersion = "rss-crab v0.1.5"
 }
 ```
 
@@ -50,6 +56,7 @@ rss-crab {
 - On first run, `feeds.csv` (if present) seeds the `feeds` table once it is empty. Each row should include `url,outlet_name,country_iso,topic,polling_interval_seconds`. You can point to a different seed file with the `--feeds-file`/`-f` CLI flag.
 - Set `telegram.enabled` to `true` with valid credentials to receive crash/ignore notifications.
 - Entries older than `articles.maxAgeDays` are ignored during insertion, allowing you to tune how far back to import historical content.
+- The health API listens on `api.port` for each IP in `api.hosts`; use a single entry like `["127.0.0.1"]` to bind to localhost only.
 
 ## Usage
 ### Running from source
