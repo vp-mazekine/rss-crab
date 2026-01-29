@@ -39,6 +39,7 @@ fun main(args: Array<String>) = runBlocking {
     var config = loadConfig(configPath)
     logger.info("Starting rss-crab ${config.sourceVersion}")
     logger.info("Using configuration from ${configPath ?: "classpath/application.conf"}")
+    logger.info("Using database at ${config.db.url} with the user account ${config.db.user}")
     if (feedsCsvPath != null) {
         logger.info("Using feeds CSV from $feedsCsvPath")
     }
